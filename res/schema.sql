@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS `mappings`
+(
+    `id`          INT(11) PRIMARY KEY AUTO_INCREMENT,
+    `url`         VARCHAR(1000) NOT NULL UNIQUE,
+    `shorten_key` VARCHAR(22)   NOT NULL UNIQUE,
+    `created_at`  DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

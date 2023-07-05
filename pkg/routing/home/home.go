@@ -1,0 +1,119 @@
+package home
+
+import (
+	"context"
+	"fmt"
+	"github.com/dusnm/mkshrt.xyz/pkg/config"
+	"github.com/dusnm/mkshrt.xyz/pkg/models"
+	"github.com/dusnm/mkshrt.xyz/pkg/repositories/mapping"
+	"github.com/dusnm/mkshrt.xyz/pkg/routing"
+	"github.com/dusnm/mkshrt.xyz/pkg/routing/home/data"
+	"github.com/gofiber/fiber/v2"
+	"net/http"
+)
+
+type (
+	Handler struct {
+		Config      *config.Config
+		MappingRepo mapping.Interface
+	}
+)
+
+func (h Handler) Routes() []routing.Route {
+	return []routing.Route{
+		{
+			Method:   http.MethodGet,
+			Path:     "/",
+			Callback: h.indexGet(),
+		},
+		{
+			Method:   http.MethodPost,
+			Path:     "/",
+			Callback: h.indexPost(),
+		},
+		{
+			Method:   http.MethodGet,
+			Path:     "/:shortenKey<len(22)>",
+			Callback: h.indexGetWithParam(),
+		},
+	}
+}
+
+func (h Handler) indexGet() routing.RouteCallback {
+	return func(ctx *fiber.Ctx) error {
+		return ctx.Render("views/home", fiber.Map{
+			"Domain": h.Config.Application.Domain,
+		})
+	}
+}
+
+func (h Handler) indexPost() routing.RouteCallback {
+	return func(ctx *fiber.Ctx) error {
+		cntx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		d, err := data.New(ctx)
+		if err != nil {
+			return ctx.
+				Status(http.StatusInternalServerError).
+				Render("views/error", fiber.Map{})
+		}
+
+		if err = d.Validate(); err != nil {
+			return ctx.
+				Status(http.StatusUnprocessableEntity).
+				Render("views/home", fiber.Map{
+					"Domain": h.Config.Application.Domain,
+					"Url":    err.Error(),
+				})
+		}
+
+		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldUrl, d.Url)
+		if err != nil {
+			return ctx.
+				Status(http.StatusInternalServerError).
+				Render("views/error", fiber.Map{})
+		}
+
+		if model == (models.Mapping{}) {
+			model, err = h.MappingRepo.Insert(cntx, d.Url)
+			if err != nil {
+				return ctx.
+					Status(http.StatusInternalServerError).
+					Render("views/error", fiber.Map{})
+			}
+		}
+
+		return ctx.Render("views/home", fiber.Map{
+			"Domain": h.Config.Application.Domain,
+			"Url": fmt.Sprintf(
+				"https://%s/%s",
+				h.Config.Application.Domain,
+				model.ShortenKey,
+			),
+		})
+	}
+}
+
+func (h Handler) indexGetWithParam() routing.RouteCallback {
+	return func(ctx *fiber.Ctx) error {
+		cntx, cancel := context.WithCancel(context.Background())
+		defer cancel()
+
+		shortenKey := ctx.Params("shortenKey", "")
+		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldShortenKey, shortenKey)
+		if err != nil {
+			return ctx.
+				Status(http.StatusInternalServerError).
+				Render("views/error", fiber.Map{})
+		}
+
+		if model == (models.Mapping{}) {
+			return ctx.
+				Status(http.StatusNotFound).
+				Render("views/error-404", fiber.Map{})
+		}
+
+		return ctx.Redirect(model.Url, http.StatusFound)
+	}
+}

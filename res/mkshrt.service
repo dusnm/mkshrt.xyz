@@ -1,0 +1,18 @@
+# You can adjust this systemd unit file to suit your needs
+[Unit]
+Description=mkshrt (A fully featured FOSS, ad & tracker free URL shortener)
+Requires=mariadb.service
+After=syslog.target
+After=network.target
+After=mariadb.service
+
+[Service]
+RestartSec=2s
+Type=simple
+User=www-data
+Group=www-data
+ExecStart=/usr/local/bin/mkshrt
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

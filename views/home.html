@@ -1,0 +1,13 @@
+<h1 class="title">{{.Domain}}</h1>
+<h2 class="subtitle">No nonsense URL shortener.</h2>
+<form action="/" method="POST">
+    <label for="url">URL</label>
+    <input id="url" name="url" type="url" required>
+    <button>Go!</button>
+</form>
+
+{{if .Url}}
+<p class="answer" id="answer">
+    <a target="_blank" rel="noopener" href="{{.Url}}">{{.Url}}</a>
+</p>
+{{end}}
