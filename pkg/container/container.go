@@ -6,17 +6,18 @@ import (
 	"github.com/dusnm/mkshrt.xyz/pkg/config"
 	"github.com/dusnm/mkshrt.xyz/pkg/database"
 	"github.com/dusnm/mkshrt.xyz/pkg/repositories/mapping"
+	periodic_delete "github.com/dusnm/mkshrt.xyz/pkg/services/periodic-delete"
 	"log"
 )
 
 type (
 	Container struct {
-		Views  embed.FS
-		Assets embed.FS
-		cfg    *config.Config
-		db     *sql.DB
-
-		mappingRepo mapping.Interface
+		Views                 embed.FS
+		Assets                embed.FS
+		cfg                   *config.Config
+		db                    *sql.DB
+		mappingRepo           mapping.Interface
+		periodicDeleteService periodic_delete.Interface
 	}
 )
 
@@ -62,6 +63,14 @@ func (c *Container) GetMappingRepository() mapping.Interface {
 	}
 
 	return c.mappingRepo
+}
+
+func (c *Container) GetPeriodicDeleteService() periodic_delete.Interface {
+	if c.periodicDeleteService == nil {
+		c.periodicDeleteService = periodic_delete.New(c.GetMappingRepository())
+	}
+
+	return c.periodicDeleteService
 }
 
 func (c *Container) Close() error {

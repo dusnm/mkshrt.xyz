@@ -23,6 +23,7 @@ type (
 	Interface interface {
 		Fetch(ctx context.Context, searchKey string, searchValue string) (models.Mapping, error)
 		Insert(ctx context.Context, url string) (models.Mapping, error)
+		DeleteOldEntries(ctx context.Context) error
 	}
 
 	Repository struct {
@@ -112,4 +113,28 @@ func (r Repository) Insert(ctx context.Context, url string) (models.Mapping, err
 		ShortenKey: shortenKey,
 		CreatedAt:  time.Now(),
 	}, nil
+}
+
+func (r Repository) DeleteOldEntries(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+
+	query := fmt.Sprintf(
+		"DELETE FROM %s WHERE DATE_DIFF(CURDATE(), DATE(created_at) > 30)",
+		TableName,
+	)
+
+	stmt, err := r.db.Prepare(query)
+	defer stmt.Close()
+
+	if err != nil {
+		return err
+	}
+
+	_, err = stmt.ExecContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

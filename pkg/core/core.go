@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"fmt"
 	"github.com/dusnm/mkshrt.xyz/pkg/container"
 	"github.com/dusnm/mkshrt.xyz/pkg/routing"
@@ -16,10 +17,11 @@ type (
 	Core struct {
 		Application *fiber.App
 		Container   *container.Container
+		Context     context.Context
 	}
 )
 
-func New(c *container.Container) *Core {
+func New(c *container.Container, ctx context.Context) *Core {
 	cfg := c.GetConfig()
 
 	return &Core{
@@ -31,6 +33,7 @@ func New(c *container.Container) *Core {
 			PassLocalsToViews:       true,
 		}),
 		Container: c,
+		Context:   ctx,
 	}
 }
 
@@ -75,6 +78,12 @@ func (c *Core) WireRoutes() *Core {
 }
 
 func (c *Core) RegisterHooks() *Core {
+	c.Application.Hooks().OnListen(func() error {
+		c.Container.GetPeriodicDeleteService().Work(c.Context)
+
+		return nil
+	})
+
 	c.Application.Hooks().OnShutdown(func() error {
 		if err := c.Container.Close(); err != nil {
 			return err
