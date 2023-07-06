@@ -17,7 +17,7 @@ type (
 	Core struct {
 		Application *fiber.App
 		Container   *container.Container
-		Context     context.Context
+		context     context.Context
 	}
 )
 
@@ -33,7 +33,7 @@ func New(c *container.Container, ctx context.Context) *Core {
 			PassLocalsToViews:       true,
 		}),
 		Container: c,
-		Context:   ctx,
+		context:   ctx,
 	}
 }
 
@@ -79,7 +79,7 @@ func (c *Core) WireRoutes() *Core {
 
 func (c *Core) RegisterHooks() *Core {
 	c.Application.Hooks().OnListen(func() error {
-		c.Container.GetPeriodicDeleteService().Work(c.Context)
+		c.Container.GetPeriodicDeleteService().Work(c.context)
 
 		return nil
 	})
