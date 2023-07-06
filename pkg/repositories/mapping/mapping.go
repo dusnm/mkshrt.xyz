@@ -55,11 +55,11 @@ func (r Repository) Fetch(
 	)
 
 	stmt, err := r.db.Prepare(query)
-	defer stmt.Close()
-
 	if err != nil {
 		return mapping, err
 	}
+
+	defer stmt.Close()
 
 	err = stmt.
 		QueryRowContext(ctx, searchValue).
@@ -97,11 +97,11 @@ func (r Repository) Insert(ctx context.Context, url string) (models.Mapping, err
 	)
 
 	stmt, err := r.db.Prepare(query)
-	defer stmt.Close()
-
 	if err != nil {
 		return models.Mapping{}, err
 	}
+
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, url, shortenKey)
 	if err != nil {
@@ -120,16 +120,16 @@ func (r Repository) DeleteOldEntries(ctx context.Context) error {
 	defer cancel()
 
 	query := fmt.Sprintf(
-		"DELETE FROM %s WHERE DATE_DIFF(CURDATE(), DATE(created_at) > 30)",
+		"DELETE FROM %s WHERE DATEDIFF(CURDATE(), DATE(created_at)) > 30",
 		TableName,
 	)
 
 	stmt, err := r.db.Prepare(query)
-	defer stmt.Close()
-
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx)
 	if err != nil {

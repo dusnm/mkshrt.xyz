@@ -106,3 +106,7 @@ func (c *Core) Listen() {
 		log.Fatal(err)
 	}
 }
+
+func (c *Core) Shutdown() error {
+	return c.Application.Shutdown()
+}

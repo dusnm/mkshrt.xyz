@@ -26,16 +26,23 @@ func New(mappingRepo mapping.Interface) Service {
 
 func (s Service) Work(ctx context.Context) {
 	ticker := time.NewTicker(24 * time.Hour)
-	go func(ctx context.Context, ticker *time.Ticker) {
+
+	go func(
+		ctx context.Context,
+		ticker *time.Ticker,
+		repo mapping.Interface,
+	) {
 		for {
 			select {
 			case <-ticker.C:
-				if err := s.mappingRepo.DeleteOldEntries(ctx); err != nil {
+				if err := repo.DeleteOldEntries(ctx); err != nil {
 					_, _ = fmt.Fprintln(os.Stderr, err)
 				}
 			case <-ctx.Done():
+				ticker.Stop()
+
 				return
 			}
 		}
-	}(ctx, ticker)
+	}(ctx, ticker, s.mappingRepo)
 }
