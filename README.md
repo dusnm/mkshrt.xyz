@@ -75,7 +75,7 @@ Example configuration is provided in `res/config.example.yml`
 You must create the log directory in whatever location you specified when you modified the configuration file.
 The process running the application must have write access to that directory.
 
-For example, if you set the log path as `/var/log/mkshrt/mkshrt.log', and you're using the `www-data` user to run the process,
+For example, if you set the log path as `/var/log/mkshrt/mkshrt.log`, and you're using the `www-data` user to run the process,
 You'd set the permissions like this.
 ```shell
 chown -R www-data:www-data /var/log/mkshrt
