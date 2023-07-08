@@ -9,6 +9,7 @@ import (
 	"github.com/dusnm/mkshrt.xyz/pkg/routing"
 	"github.com/dusnm/mkshrt.xyz/pkg/routing/home/data"
 	"github.com/gofiber/fiber/v2"
+	"golang.org/x/exp/slog"
 	"net/http"
 )
 
@@ -16,6 +17,7 @@ type (
 	Handler struct {
 		Config      *config.Config
 		MappingRepo mapping.Interface
+		Context     context.Context
 	}
 )
 
@@ -49,7 +51,7 @@ func (h Handler) indexGet() routing.RouteCallback {
 
 func (h Handler) indexPost() routing.RouteCallback {
 	return func(ctx *fiber.Ctx) error {
-		cntx, cancel := context.WithCancel(context.Background())
+		cntx, cancel := context.WithCancel(h.Context)
 		defer cancel()
 
 		d, err := data.New(ctx)
@@ -70,6 +72,8 @@ func (h Handler) indexPost() routing.RouteCallback {
 
 		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldUrl, d.Url)
 		if err != nil {
+			slog.ErrorCtx(cntx, err.Error())
+
 			return ctx.
 				Status(http.StatusInternalServerError).
 				Render("views/error", fiber.Map{})
@@ -97,12 +101,14 @@ func (h Handler) indexPost() routing.RouteCallback {
 
 func (h Handler) indexGetWithParam() routing.RouteCallback {
 	return func(ctx *fiber.Ctx) error {
-		cntx, cancel := context.WithCancel(context.Background())
+		cntx, cancel := context.WithCancel(h.Context)
 		defer cancel()
 
 		shortenKey := ctx.Params("shortenKey", "")
 		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldShortenKey, shortenKey)
 		if err != nil {
+			slog.ErrorCtx(cntx, err.Error())
+
 			return ctx.
 				Status(http.StatusInternalServerError).
 				Render("views/error", fiber.Map{})

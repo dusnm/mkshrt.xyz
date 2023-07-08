@@ -38,6 +38,7 @@ func main() {
 	}(&wg)
 
 	app.
+		WireLogging().
 		WireAppLevelMiddleware().
 		WireRoutes().
 		RegisterHooks().

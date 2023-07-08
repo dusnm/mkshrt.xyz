@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"golang.org/x/exp/slog"
 	"log"
 )
 
@@ -10,11 +11,13 @@ type (
 	Config struct {
 		Application Application `mapstructure:"application"`
 		Database    Database    `mapstructure:"database"`
+		Logging     Logging     `mapstructure:"logging"`
 	}
 )
 
 func (c *Config) update(in fsnotify.Event) {
-	// TODO: Log event
+	slog.Info(in.String())
+
 	if err := viper.Unmarshal(c); err != nil {
 		log.Fatalln("Invalid configuration: " + err.Error())
 	}

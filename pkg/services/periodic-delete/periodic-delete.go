@@ -2,9 +2,8 @@ package periodic_delete
 
 import (
 	"context"
-	"fmt"
 	"github.com/dusnm/mkshrt.xyz/pkg/repositories/mapping"
-	"os"
+	"golang.org/x/exp/slog"
 	"time"
 )
 
@@ -36,7 +35,9 @@ func (s Service) Work(ctx context.Context) {
 			select {
 			case <-ticker.C:
 				if err := repo.DeleteOldEntries(ctx); err != nil {
-					_, _ = fmt.Fprintln(os.Stderr, err)
+					slog.ErrorCtx(ctx, err.Error())
+				} else {
+					slog.InfoCtx(ctx, "deleted old entries")
 				}
 			case <-ctx.Done():
 				ticker.Stop()

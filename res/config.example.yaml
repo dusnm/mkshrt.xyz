@@ -1,19 +1,25 @@
 application:
-    host: localhost
-    port: 8080
-    domain: mkshrt.xyz
-    # If you deploy this application behind a proxy
-    # or a load balancer set this to switch to true
-    behind_proxy: false
-    # List allowed proxy IPs here
-    trusted_proxies:
-        - 127.0.0.1
-        - 192.168.1.2
-        - 93.184.216.34
+  host: localhost
+  port: 8080
+  domain: mkshrt.xyz
+  # If you deploy this application behind a proxy
+  # or a load balancer set this to switch to true
+  behind_proxy: false
+  # List allowed proxy IPs here
+  trusted_proxies:
+    - 127.0.0.1
+    - 192.168.1.2
+    - 93.184.216.34
 database:
-    host: localhost
-    port: 3306
-    name: mkshrt
-    user: mkshrt
-    pass: test
-    charset: utf8mb4
+  host: localhost
+  port: 3306
+  name: mkshrt
+  user: mkshrt
+  pass: test
+  charset: utf8mb4
+logging:
+  file: /var/log/mkshrt/mkshrt.log
+  # debug info warn error
+  level: info
+  # text or json
+  format: text
