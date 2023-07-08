@@ -81,6 +81,14 @@ You'd set the permissions like this.
 chown -R www-data:www-data /var/log/mkshrt
 ```
 
+## Preparing the database
+The application uses MySQL or MariaDB (recommended) as its database.
+
+The database schema is provided in `res/schema.sql`. To import it, run the `mysql` utility.
+```shell
+mysql -u username -p database_name < ./res/schema.sql
+```
+
 ## Running the application with systemd
 
 A `systemd` unit file is provided in `res/mkshrt.service`. Place this file in the `/etc/systemd/system/' directory and reload the systemd daemon to make it aware of the new service.
