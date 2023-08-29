@@ -5,7 +5,7 @@ Features:
 
 * Can be self-hosted
 * Configured with YAML
-* Shortens URLs to at most 37 characters. (with the default domain)
+* Shortens URLs to at most 28 characters. (with the default domain)
 * No ads, tracking or other nonsense
 
 Dependencies:
