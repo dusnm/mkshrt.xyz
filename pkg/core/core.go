@@ -3,6 +3,10 @@ package core
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+
 	"github.com/dusnm/mkshrt.xyz/pkg/config"
 	"github.com/dusnm/mkshrt.xyz/pkg/container"
 	"github.com/dusnm/mkshrt.xyz/pkg/routing"
@@ -11,9 +15,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/filesystem"
 	"github.com/gofiber/template/html/v2"
 	"golang.org/x/exp/slog"
-	"log"
-	"net/http"
-	"os"
 )
 
 type (
@@ -116,7 +117,7 @@ func (c *Core) WireRoutes() *Core {
 }
 
 func (c *Core) RegisterHooks() *Core {
-	c.Application.Hooks().OnListen(func() error {
+	c.Application.Hooks().OnListen(func(_ fiber.ListenData) error {
 		c.Container.GetPeriodicDeleteService().Work(c.context)
 
 		return nil
