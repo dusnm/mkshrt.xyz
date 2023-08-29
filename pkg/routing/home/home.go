@@ -44,7 +44,7 @@ func (h Handler) Routes() []routing.Route {
 func (h Handler) indexGet() routing.RouteCallback {
 	return func(ctx *fiber.Ctx) error {
 		return ctx.Render("views/home", fiber.Map{
-			"Domain": h.Config.Application.Domain,
+			"Domain": ctx.Hostname(),
 		})
 	}
 }
@@ -54,6 +54,7 @@ func (h Handler) indexPost() routing.RouteCallback {
 		cntx, cancel := context.WithCancel(h.Context)
 		defer cancel()
 
+		domain := ctx.Hostname()
 		d, err := data.New(ctx)
 		if err != nil {
 			return ctx.
@@ -65,7 +66,7 @@ func (h Handler) indexPost() routing.RouteCallback {
 			return ctx.
 				Status(http.StatusUnprocessableEntity).
 				Render("views/home", fiber.Map{
-					"Domain": h.Config.Application.Domain,
+					"Domain": domain,
 					"Url":    err.Error(),
 				})
 		}
@@ -89,10 +90,10 @@ func (h Handler) indexPost() routing.RouteCallback {
 		}
 
 		return ctx.Render("views/home", fiber.Map{
-			"Domain": h.Config.Application.Domain,
+			"Domain": ctx.Hostname(),
 			"Url": fmt.Sprintf(
 				"https://%s/%s",
-				h.Config.Application.Domain,
+				domain,
 				model.ShortenKey,
 			),
 		})

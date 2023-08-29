@@ -1,7 +1,6 @@
 application:
   host: localhost
   port: 8080
-  domain: mkshrt.xyz
   # If you deploy this application behind a proxy
   # or a load balancer set this to switch to true
   behind_proxy: false
