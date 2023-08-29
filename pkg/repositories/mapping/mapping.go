@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/dusnm/mkshrt.xyz/pkg/models"
 	"github.com/dusnm/mkshrt.xyz/pkg/utils/random"
-	"time"
 )
 
 const (
@@ -84,7 +85,13 @@ func (r Repository) Insert(ctx context.Context, url string) (models.Mapping, err
 	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 
-	shortenKey, err := random.UniqueString()
+	// 6 bytes gives us 2^48 possible combinations
+	// The approximate solution to the birthday problem
+	// gives us a collision probability of ~ 2.13×10^-14
+	// which is extremely unlikely, but the resulting string
+	// contains only 8 characters after base64 encoding, which
+	// I feel is an acceptable trade-off
+	shortenKey, err := random.String(6)
 	if err != nil {
 		return models.Mapping{}, err
 	}

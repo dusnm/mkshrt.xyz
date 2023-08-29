@@ -3,6 +3,8 @@ package home
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/dusnm/mkshrt.xyz/pkg/config"
 	"github.com/dusnm/mkshrt.xyz/pkg/models"
 	"github.com/dusnm/mkshrt.xyz/pkg/repositories/mapping"
@@ -10,7 +12,6 @@ import (
 	"github.com/dusnm/mkshrt.xyz/pkg/routing/home/data"
 	"github.com/gofiber/fiber/v2"
 	"golang.org/x/exp/slog"
-	"net/http"
 )
 
 type (
@@ -35,7 +36,7 @@ func (h Handler) Routes() []routing.Route {
 		},
 		{
 			Method:   http.MethodGet,
-			Path:     "/:shortenKey<len(22)>",
+			Path:     "/:shortenKey<len(8)>",
 			Callback: h.indexGetWithParam(),
 		},
 	}

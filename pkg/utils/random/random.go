@@ -1,13 +1,14 @@
 package random
 
 import (
+	"crypto/rand"
 	"encoding/base64"
-	"github.com/google/uuid"
 )
 
-func UniqueString() (string, error) {
-	u := uuid.New()
-	b, err := u.MarshalBinary()
+func String(numberOfBytes uint) (string, error) {
+	b := make([]byte, numberOfBytes)
+	_, err := rand.Read(b)
+
 	if err != nil {
 		return "", err
 	}
