@@ -89,6 +89,7 @@ button {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
+    flex-grow: 2;
 }
 
 .answer img {
@@ -101,7 +102,7 @@ button {
 }
 
 .answer .answer-clipboard {
-    flex-grow: 2;
+    flex-grow: 1;
     background-color: black;
     border: 2px solid black;
 }
