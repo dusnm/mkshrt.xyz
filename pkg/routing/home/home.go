@@ -3,6 +3,7 @@ package home
 import (
 	"context"
 	"fmt"
+	"github.com/dusnm/mkshrt.xyz/pkg/utils/qr"
 	"net/http"
 
 	"github.com/dusnm/mkshrt.xyz/pkg/config"
@@ -74,7 +75,7 @@ func (h Handler) indexPost() routing.RouteCallback {
 
 		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldUrl, d.Url)
 		if err != nil {
-			slog.ErrorCtx(cntx, err.Error())
+			slog.ErrorContext(cntx, err.Error())
 
 			return ctx.
 				Status(http.StatusInternalServerError).
@@ -90,13 +91,25 @@ func (h Handler) indexPost() routing.RouteCallback {
 			}
 		}
 
+		url := fmt.Sprintf(
+			"https://%s/%s",
+			domain,
+			model.ShortenKey,
+		)
+
+		qrB64, err := qr.GenerateWithBase64Encoding(url)
+		if err != nil {
+			slog.ErrorContext(cntx, err.Error())
+
+			return ctx.
+				Status(http.StatusInternalServerError).
+				Render("views/error", fiber.Map{})
+		}
+
 		return ctx.Render("views/home", fiber.Map{
 			"Domain": ctx.Hostname(),
-			"Url": fmt.Sprintf(
-				"https://%s/%s",
-				domain,
-				model.ShortenKey,
-			),
+			"Url":    url,
+			"QRCode": qrB64,
 		})
 	}
 }
@@ -109,7 +122,7 @@ func (h Handler) indexGetWithParam() routing.RouteCallback {
 		shortenKey := ctx.Params("shortenKey", "")
 		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldShortenKey, shortenKey)
 		if err != nil {
-			slog.ErrorCtx(cntx, err.Error())
+			slog.ErrorContext(cntx, err.Error())
 
 			return ctx.
 				Status(http.StatusInternalServerError).

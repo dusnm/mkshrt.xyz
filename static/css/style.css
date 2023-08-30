@@ -69,9 +69,16 @@ button {
 }
 
 .answer a {
-    color: var(--blue)
+    color: var(--blue);
+    display: block;
+    padding: 1rem 0;
 }
 
 .answer a:hover {
     color: white;
+}
+
+.answer img {
+    max-height: 250px;
+    width: auto;
 }

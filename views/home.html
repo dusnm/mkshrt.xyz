@@ -8,6 +8,11 @@
 
 {{if .Url}}
 <p class="answer" id="answer">
+    <img
+        src="data:image/jpeg;base64,{{.QRCode}}"
+        alt="QR Code with the shortened URL"
+        draggable="false"
+    >
     <a target="_blank" rel="noopener" href="{{.Url}}">{{.Url}}</a>
 </p>
 {{end}}
