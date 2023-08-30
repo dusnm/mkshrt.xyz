@@ -44,10 +44,8 @@ main {
 
 input {
     padding: 0.5rem 1rem;
-}
-
-input:valid {
-    border: 2px solid var(--blue);
+    flex-grow: 2;
+    border: none;
 }
 
 label {
@@ -58,24 +56,34 @@ button {
     padding: 0.5rem 1rem;
     background-color: var(--blue);
     color: white;
-    border: none;
     cursor: pointer;
+    border: 2px solid var(--blue);
+}
+
+.submit-box {
+    display: flex;
+    width: 75%;
+}
+
+.submit-label {
+    border: 2px solid white;
 }
 
 .answer {
     padding: 2rem;
     margin: 1rem 0;
-    border: 2px solid var(--blue);
+    border: 2px solid white;
+    background-color: var(--royal-blue);
 }
 
 .answer a {
-    color: var(--blue);
+    color: black;
+    background-color: white;
     display: block;
     padding: 1rem 0;
-}
-
-.answer a:hover {
-    color: white;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
 }
 
 .answer img {

@@ -1,17 +1,19 @@
 <h1 class="title">{{.Domain}}</h1>
 <h2 class="subtitle">No nonsense URL shortener.</h2>
 <form action="/" method="POST">
-    <label for="url">URL</label>
-    <input id="url" name="url" type="url" required>
-    <button>Go!</button>
+    <div class="submit-box">
+        <label class="submit-label" for="url">URL</label>
+        <input id="url" name="url" type="url" required placeholder="Enter a URL">
+        <button>Go!</button>
+    </div>
 </form>
 
 {{if .Url}}
 <p class="answer" id="answer">
     <img
-        src="data:image/jpeg;base64,{{.QRCode}}"
-        alt="QR Code with the shortened URL"
-        draggable="false"
+            src="data:image/jpeg;base64,{{.QRCode}}"
+            alt="QR Code with the shortened URL"
+            draggable="false"
     >
     <a target="_blank" rel="noopener" href="{{.Url}}">{{.Url}}</a>
 </p>
