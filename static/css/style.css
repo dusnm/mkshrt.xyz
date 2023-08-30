@@ -13,6 +13,7 @@
     --foreground: #fff;
     --blue: #0062cc;
     --royal-blue: #0072ff;
+    --green: #89ce62;
 }
 
 html, body, main {
@@ -76,20 +77,31 @@ button {
     padding: 2rem;
     margin: 1rem 0;
     border: 2px solid white;
-    background-color: var(--royal-blue);
+    background-color: var(--blue);
+    text-align: center;
 }
 
 .answer a {
     color: black;
     background-color: white;
     display: block;
-    padding: 1rem 0;
+    padding: 1rem 0.5rem;
     cursor: pointer;
     text-align: center;
     text-decoration: none;
 }
 
 .answer img {
-    max-height: 250px;
+    height: 300px;
     width: auto;
+}
+
+.answer-link {
+    display: flex;
+}
+
+.answer .answer-clipboard {
+    flex-grow: 2;
+    background-color: black;
+    border: 2px solid black;
 }

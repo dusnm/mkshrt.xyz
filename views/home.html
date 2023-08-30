@@ -9,12 +9,16 @@
 </form>
 
 {{if .Url}}
-<p class="answer" id="answer">
+<div class="answer">
     <img
             src="data:image/jpeg;base64,{{.QRCode}}"
             alt="QR Code with the shortened URL"
             draggable="false"
     >
-    <a target="_blank" rel="noopener" href="{{.Url}}">{{.Url}}</a>
-</p>
+    <div class="answer-link">
+        <a id="answer" target="_blank" rel="noopener" href="{{.Url}}">{{.Url}}</a>
+        <button type="button" id="copy-button" class="answer-clipboard">Copy</button>
+    </div>
+</div>
+<script src="/static/js/main.js"></script>
 {{end}}
