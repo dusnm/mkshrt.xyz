@@ -46,6 +46,9 @@ input {
     padding: 0.5rem 1rem;
     flex-grow: 2;
     border: none;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0;
+    border-radius: 0;
 }
 
 label {
