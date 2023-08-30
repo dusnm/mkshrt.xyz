@@ -141,8 +141,17 @@ func (c *Core) Listen() {
 	port := cfg.Application.Port
 	socket := fmt.Sprintf("%s:%d", host, port)
 
-	if err := c.Application.Listen(socket); err != nil {
-		log.Fatal(err)
+	if cfg.Application.TLS.Enabled {
+		cert := cfg.Application.TLS.CertPath
+		key := cfg.Application.TLS.KeyPath
+
+		if err := c.Application.ListenTLS(socket, cert, key); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		if err := c.Application.Listen(socket); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 

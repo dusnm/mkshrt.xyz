@@ -9,6 +9,11 @@ application:
     - 127.0.0.1
     - 192.168.1.2
     - 93.184.216.34
+  # if you prefer to directly deploy the TLS cert
+  tls:
+    enabled: false
+    cert_path: /path/to/certificate
+    key_path: /path/to/key
 database:
   host: localhost
   port: 3306
