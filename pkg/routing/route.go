@@ -5,11 +5,9 @@ import (
 )
 
 type (
-	RouteCallback func(ctx *fiber.Ctx) error
-
 	Route struct {
 		Method   string
 		Path     string
-		Callback RouteCallback
+		Callback fiber.Handler
 	}
 )

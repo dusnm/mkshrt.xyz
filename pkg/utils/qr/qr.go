@@ -34,7 +34,8 @@ func Generate(data string) ([]byte, error) {
 	c := nopCloser{Writer: b}
 	w := standard.NewWithWriter(
 		c,
-		standard.WithQRWidth(40),
+		standard.WithBorderWidth(40),
+		standard.WithQRWidth(10),
 		standard.WithBuiltinImageEncoder(standard.JPEG_FORMAT),
 	)
 

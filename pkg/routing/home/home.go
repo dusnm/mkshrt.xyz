@@ -3,8 +3,9 @@ package home
 import (
 	"context"
 	"fmt"
-	"github.com/dusnm/mkshrt.xyz/pkg/utils/qr"
 	"net/http"
+
+	"github.com/dusnm/mkshrt.xyz/pkg/utils/qr"
 
 	"github.com/dusnm/mkshrt.xyz/pkg/config"
 	"github.com/dusnm/mkshrt.xyz/pkg/models"
@@ -43,7 +44,7 @@ func (h Handler) Routes() []routing.Route {
 	}
 }
 
-func (h Handler) indexGet() routing.RouteCallback {
+func (h Handler) indexGet() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		return ctx.Render("views/home", fiber.Map{
 			"Domain": ctx.Hostname(),
@@ -51,10 +52,9 @@ func (h Handler) indexGet() routing.RouteCallback {
 	}
 }
 
-func (h Handler) indexPost() routing.RouteCallback {
+func (h Handler) indexPost() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-		cntx, cancel := context.WithCancel(h.Context)
-		defer cancel()
+		ctx.SetUserContext(h.Context)
 
 		domain := ctx.Hostname()
 		d, err := data.New(ctx)
@@ -73,9 +73,9 @@ func (h Handler) indexPost() routing.RouteCallback {
 				})
 		}
 
-		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldUrl, d.Url)
+		model, err := h.MappingRepo.Fetch(ctx.UserContext(), mapping.FieldUrl, d.Url)
 		if err != nil {
-			slog.ErrorContext(cntx, err.Error())
+			slog.ErrorContext(ctx.UserContext(), err.Error())
 
 			return ctx.
 				Status(http.StatusInternalServerError).
@@ -83,7 +83,7 @@ func (h Handler) indexPost() routing.RouteCallback {
 		}
 
 		if model == (models.Mapping{}) {
-			model, err = h.MappingRepo.Insert(cntx, d.Url)
+			model, err = h.MappingRepo.Insert(ctx.UserContext(), d.Url)
 			if err != nil {
 				return ctx.
 					Status(http.StatusInternalServerError).
@@ -99,7 +99,7 @@ func (h Handler) indexPost() routing.RouteCallback {
 
 		qrB64, err := qr.GenerateWithBase64Encoding(url)
 		if err != nil {
-			slog.ErrorContext(cntx, err.Error())
+			slog.ErrorContext(ctx.UserContext(), err.Error())
 
 			return ctx.
 				Status(http.StatusInternalServerError).
@@ -114,15 +114,14 @@ func (h Handler) indexPost() routing.RouteCallback {
 	}
 }
 
-func (h Handler) indexGetWithParam() routing.RouteCallback {
+func (h Handler) indexGetWithParam() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
-		cntx, cancel := context.WithCancel(h.Context)
-		defer cancel()
+		ctx.SetUserContext(h.Context)
 
 		shortenKey := ctx.Params("shortenKey", "")
-		model, err := h.MappingRepo.Fetch(cntx, mapping.FieldShortenKey, shortenKey)
+		model, err := h.MappingRepo.Fetch(ctx.UserContext(), mapping.FieldShortenKey, shortenKey)
 		if err != nil {
-			slog.ErrorContext(cntx, err.Error())
+			slog.ErrorContext(ctx.UserContext(), err.Error())
 
 			return ctx.
 				Status(http.StatusInternalServerError).
